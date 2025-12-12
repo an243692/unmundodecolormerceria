@@ -1,0 +1,254 @@
+.product-detail-modal {
+  max-width: 1000px;
+}
+
+.product-detail-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  padding: 20px;
+}
+
+.product-detail-images {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.main-image {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--light-gray);
+}
+
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail-images {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 5px 0;
+}
+
+.thumbnail-images img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.thumbnail-images img:hover {
+  border-color: var(--primary-blue);
+}
+
+.thumbnail-images img.active {
+  border-color: var(--primary-blue);
+  opacity: 0.8;
+}
+
+.product-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #999;
+}
+
+.breadcrumb span:not(:last-child) {
+  cursor: pointer;
+}
+
+.breadcrumb span:not(:last-child):hover {
+  color: var(--primary-blue);
+}
+
+.product-detail-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--dark-gray);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.product-brand,
+.product-sku {
+  margin: 0;
+  font-size: 14px;
+  color: #999;
+}
+
+.product-detail-pricing {
+  padding: 20px;
+  background-color: var(--light-gray);
+  border-radius: 8px;
+}
+
+.price-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.price-section:last-child {
+  margin-bottom: 0;
+}
+
+.price-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.price-main {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.wholesale-price-main {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--primary-gold);
+}
+
+.wholesale-badge {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: var(--primary-gold);
+  color: var(--dark-gray);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.product-detail-stock {
+  padding: 10px;
+  border-radius: 6px;
+  background-color: var(--light-gray);
+}
+
+.product-detail-description h3 {
+  font-size: 18px;
+  margin: 0 0 10px;
+  color: var(--primary-blue);
+}
+
+.product-detail-description p {
+  margin: 0;
+  line-height: 1.6;
+  color: #666;
+}
+
+.product-detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--light-gray);
+}
+
+.quantity-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quantity-selector label {
+  font-weight: 500;
+  color: var(--dark-gray);
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 2px solid var(--light-gray);
+  border-radius: 8px;
+  padding: 8px;
+  width: fit-content;
+}
+
+.quantity-btn {
+  background: none;
+  border: none;
+  color: var(--primary-blue);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background-color: var(--light-blue);
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-value {
+  min-width: 50px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.quantity-total {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+
+.add-to-cart-btn {
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.add-to-cart-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 968px) {
+  .product-detail-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-detail-name {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-detail-content {
+    padding: 15px;
+    gap: 20px;
+  }
+  
+  .main-image {
+    aspect-ratio: 4/3;
+  }
+}
+

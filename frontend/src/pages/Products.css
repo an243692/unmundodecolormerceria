@@ -1,0 +1,147 @@
+.products-page {
+  min-height: calc(100vh - 80px);
+  padding-top: 20px;
+}
+
+.products-header {
+  background-color: var(--white);
+  padding: 30px 0;
+  border-bottom: 2px solid var(--light-gray);
+  margin-bottom: 30px;
+}
+
+.products-header h1 {
+  font-size: 32px;
+  color: var(--primary-blue);
+  margin: 0 0 20px;
+}
+
+.products-controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.search-bar {
+  flex: 1;
+  max-width: 500px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid var(--light-gray);
+  border-radius: 25px;
+  font-size: 14px;
+}
+
+.search-bar input:focus {
+  border-color: var(--primary-blue);
+  outline: none;
+}
+
+.filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--primary-blue);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.filter-toggle-btn:hover {
+  background-color: var(--secondary-blue);
+}
+
+.products-count {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.products-content {
+  display: flex;
+  gap: 30px;
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.products-grid-container {
+  flex: 1;
+  min-width: 0; /* Permite que el contenedor se ajuste */
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.loading-container,
+.no-products {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loading-container p {
+  margin-top: 20px;
+  color: #666;
+}
+
+.no-products p {
+  font-size: 18px;
+  color: #999;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 968px) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .products-header {
+    padding: 20px 0;
+  }
+  
+  .products-header h1 {
+    font-size: 24px;
+  }
+  
+  .products-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-bar {
+    max-width: 100%;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .products-content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

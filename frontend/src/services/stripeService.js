@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-export const createCheckoutSession = async (items, orderId, userInfo) => {
+export const createCheckoutSession = async (items, orderId, userInfo, userId) => {
   try {
     const response = await fetch(`${API_URL}/create-checkout-session`, {
       method: 'POST',

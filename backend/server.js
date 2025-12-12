@@ -83,9 +83,23 @@ app.post('/create-checkout-session', async (req, res) => {
 
     // Crear line items para Stripe
     const lineItems = items.map(item => {
-      // Filtrar imágenes: Stripe solo acepta URLs de máximo 2048 caracteres
+      // Filtrar imágenes: Stripe solo acepta URLs HTTP/HTTPS (no Data URLs base64)
+      // y máximo 2048 caracteres
       const validImages = (item.images || [])
-        .filter(img => img && typeof img === 'string' && img.length <= 2048)
+        .filter(img => {
+          if (!img || typeof img !== 'string') return false;
+          
+          // Rechazar Data URLs (base64) - empiezan con "data:"
+          if (img.startsWith('data:')) return false;
+          
+          // Solo aceptar URLs HTTP/HTTPS válidas
+          if (!img.startsWith('http://') && !img.startsWith('https://')) return false;
+          
+          // Verificar que no exceda el límite de Stripe
+          if (img.length > 2048) return false;
+          
+          return true;
+        })
         .slice(0, 8); // Stripe permite máximo 8 imágenes por producto
       
       return {

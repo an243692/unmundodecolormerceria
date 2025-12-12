@@ -82,17 +82,24 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 
     // Crear line items para Stripe
-    const lineItems = items.map(item => ({
-      price_data: {
-        currency: 'mxn',
-        product_data: {
-          name: item.name,
-          images: item.images || [],
+    const lineItems = items.map(item => {
+      // Filtrar imágenes: Stripe solo acepta URLs de máximo 2048 caracteres
+      const validImages = (item.images || [])
+        .filter(img => img && typeof img === 'string' && img.length <= 2048)
+        .slice(0, 8); // Stripe permite máximo 8 imágenes por producto
+      
+      return {
+        price_data: {
+          currency: 'mxn',
+          product_data: {
+            name: item.name,
+            images: validImages.length > 0 ? validImages : undefined, // Solo incluir si hay imágenes válidas
+          },
+          unit_amount: Math.round(item.unitPrice * 100), // Convertir a centavos
         },
-        unit_amount: Math.round(item.unitPrice * 100), // Convertir a centavos
-      },
-      quantity: item.quantity,
-    }));
+        quantity: item.quantity,
+      };
+    });
 
     // Crear sesión de checkout
     const session = await stripe.checkout.sessions.create({

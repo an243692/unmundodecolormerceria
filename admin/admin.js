@@ -16,7 +16,7 @@ if (typeof firebase === 'undefined') {
 }
 
 // Initialize Firebase
-let db, rtdb;
+let db, rtdb, storage;
 
 function initializeFirebase() {
     try {
@@ -48,13 +48,15 @@ function initializeFirebase() {
             console.log('Firebase ya estaba inicializado');
         }
         
-        // Usar compat mode para Firestore y Database
+        // Usar compat mode para Firestore, Database y Storage
         db = firebase.firestore();
         rtdb = firebase.database();
+        storage = firebase.storage();
         
         console.log('Firebase inicializado correctamente');
         console.log('db:', db ? 'OK' : 'ERROR');
         console.log('rtdb:', rtdb ? 'OK' : 'ERROR');
+        console.log('storage:', storage ? 'OK' : 'ERROR');
         
         // Verificar conexión a Firestore
         if (db) {
@@ -216,23 +218,42 @@ function initializeApp() {
     }
 
     if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
+        fileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
-            files.forEach(file => {
+            
+            for (const file of files) {
                 if (file.size > 5 * 1024 * 1024) {
                     alert(`El archivo ${file.name} es demasiado grande. Máximo 5MB.`);
-                    return;
+                    continue;
                 }
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        addImageToPreview(event.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                } else {
+                if (!file.type.startsWith('image/')) {
                     alert(`El archivo ${file.name} no es una imagen válida.`);
+                    continue;
                 }
-            });
+                
+                // Mostrar preview temporal mientras se sube
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    addImageToPreview(event.target.result, true); // true = es temporal
+                };
+                reader.readAsDataURL(file);
+                
+                // Subir a Firebase Storage
+                try {
+                    await uploadImageToStorage(file);
+                } catch (error) {
+                    console.error('Error al subir imagen:', error);
+                    alert(`Error al subir ${file.name}. Por favor intenta de nuevo.`);
+                    // Remover la imagen temporal del preview
+                    const tempIndex = productImages.findIndex(img => img.startsWith('data:'));
+                    if (tempIndex !== -1) {
+                        removeImage(tempIndex);
+                    }
+                }
+            }
+            
+            // Limpiar el input
+            fileInput.value = '';
         });
     }
 
@@ -306,9 +327,67 @@ function isValidImageUrl(url) {
     return url.startsWith('http://') || url.startsWith('https://');
 }
 
-function addImageToPreview(imageUrl) {
-    productImages.push(imageUrl);
+function addImageToPreview(imageUrl, isTemporary = false) {
+    if (isTemporary) {
+        // Si es temporal, reemplazar la última imagen temporal si existe
+        const lastTempIndex = productImages.findLastIndex(img => img && img.startsWith('data:'));
+        if (lastTempIndex !== -1) {
+            productImages[lastTempIndex] = imageUrl;
+        } else {
+            productImages.push(imageUrl);
+        }
+    } else {
+        productImages.push(imageUrl);
+    }
     updateImagePreview();
+}
+
+// Función para subir imagen a Firebase Storage
+async function uploadImageToStorage(file) {
+    if (!storage) {
+        throw new Error('Firebase Storage no está inicializado');
+    }
+    
+    try {
+        // Crear referencia única para la imagen
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(2, 15);
+        const fileName = `products/${timestamp}_${randomString}_${file.name}`;
+        const storageRef = storage.ref().child(fileName);
+        
+        // Mostrar indicador de carga
+        const container = document.getElementById('imagePreviewContainer');
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.className = 'upload-loading';
+        loadingIndicator.style.cssText = 'padding: 10px; background: rgba(0,0,0,0.5); color: white; border-radius: 4px; margin: 5px 0;';
+        loadingIndicator.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo ${file.name}...`;
+        container.appendChild(loadingIndicator);
+        
+        // Subir el archivo
+        const snapshot = await storageRef.put(file);
+        
+        // Obtener la URL de descarga pública
+        const downloadURL = await snapshot.ref.getDownloadURL();
+        
+        // Remover el indicador de carga
+        loadingIndicator.remove();
+        
+        // Reemplazar la imagen temporal (Data URL) con la URL pública
+        const tempIndex = productImages.findLastIndex(img => img && img.startsWith('data:'));
+        if (tempIndex !== -1) {
+            productImages[tempIndex] = downloadURL;
+        } else {
+            productImages.push(downloadURL);
+        }
+        
+        updateImagePreview();
+        
+        console.log('Imagen subida exitosamente:', downloadURL);
+        return downloadURL;
+    } catch (error) {
+        console.error('Error al subir imagen a Storage:', error);
+        throw error;
+    }
 }
 
 function removeImage(index) {

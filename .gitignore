@@ -44,6 +44,10 @@ firestore-debug.log
 .env.local
 .env.*.local
 
+# Frontend env (pero .env.example sí se sube)
+frontend/.env.local
+frontend/.env
+
 # OS
 Thumbs.db
 desktop.ini

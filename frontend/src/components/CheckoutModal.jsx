@@ -186,7 +186,16 @@ const CheckoutModal = ({ onClose, onBack }) => {
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error('Error al procesar pago:', error);
-      alert('Error al procesar el pago. Por favor intenta de nuevo.');
+      let errorMessage = 'Error al procesar el pago. Por favor intenta de nuevo.';
+      
+      // Mostrar mensaje más específico
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.toString().includes('Failed to fetch') || error.toString().includes('NetworkError')) {
+        errorMessage = 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo en http://localhost:5000 o configura VITE_API_URL en .env.local';
+      }
+      
+      alert(errorMessage);
       setLoading(false);
     }
   };

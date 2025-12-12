@@ -16,8 +16,14 @@ export const createCheckoutSession = async (items, orderId, userInfo, userId) =>
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error al crear sesión de checkout');
+      let errorMessage = 'Error al crear sesión de checkout';
+      try {
+        const error = await response.json();
+        errorMessage = error.error || error.message || errorMessage;
+      } catch (e) {
+        errorMessage = `Error ${response.status}: ${response.statusText}`;
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
